@@ -14,6 +14,11 @@
 
   // Your code here...
   console.log = console.debug
+  console.error = console.debug
+
+  let iteration = window.iteration || 0
+  iteration++
+  window.iteration = iteration
 
   function querySelector(selector) {
     let es = document.querySelectorAll(selector)
@@ -30,6 +35,10 @@
 
   function waitFor(f, cb) {
     function loop() {
+      if (window.iteration != iteration) {
+        console.log('detected next iteration, stop waitFor()')
+        return
+      }
       if (f()) {
         cb()
       } else {
@@ -117,4 +126,73 @@
   }
 
   window.ask = ask
+
+  let apiOrigin = 'http://localhost:8041'
+
+  async function fetchJSON(url, init) {
+    let res = await fetch(apiOrigin + url, init)
+    let json = await res.json()
+    if (json.error) {
+      throw json.error
+    }
+    return json
+  }
+
+  function getTask() {
+    return fetchJSON('/task', {
+      headers: {
+        Accept: 'application/json',
+      },
+    })
+  }
+
+  function updateTask(task, data) {
+    return fetchJSON('/task/' + task.id + '/update', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+  }
+
+  function loop() {
+    if (window.iteration != iteration) {
+      console.log('detected next iteration, stop loop()')
+      return
+    }
+    getTask()
+      .then(({ task }) => {
+        ask({
+          question: task.question,
+          onUpdate: data => {
+            data.completed = false
+            updateTask(task, data).catch(error => {
+              console.error('failed to update task:', error)
+            })
+          },
+          onComplete: data => {
+            data.completed = true
+            updateTask(task, data)
+              .then(() => {
+                loop()
+              })
+              .catch(error => {
+                console.error('failed to update task:', error)
+              })
+          },
+        })
+      })
+      .catch(error => {
+        console.error('failed to get task:', error)
+        if (String(error) == 'no task on queue') {
+          setTimeout(loop)
+        } else {
+          setTimeout(loop, 3500)
+        }
+      })
+  }
+
+  loop()
 })()
