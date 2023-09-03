@@ -47,6 +47,7 @@ function clearGetCompletedTaskResponses(
   let responses = getCompletedTaskResponses.get(task)
   if (!responses) return
   responses.forEach(res => f(res))
+  responses.length = 0 // remove all responses to avoid the timeout handler write to response again
   getCompletedTaskResponses.delete(task)
 }
 
