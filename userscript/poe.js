@@ -138,8 +138,8 @@
     return json
   }
 
-  function getTask() {
-    return fetchJSON('/task', {
+  function getPendingTask() {
+    return fetchJSON('/tasks/pending', {
       headers: {
         Accept: 'application/json',
       },
@@ -147,8 +147,8 @@
   }
 
   function updateTask(task, data) {
-    return fetchJSON('/task/' + task.id + '/update', {
-      method: 'POST',
+    return fetchJSON('/tasks/' + task.id, {
+      method: 'PATCH',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -162,7 +162,7 @@
       console.log('detected next iteration, stop loop()')
       return
     }
-    getTask()
+    getPendingTask()
       .then(({ task }) => {
         ask({
           question: task.question,

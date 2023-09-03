@@ -29,7 +29,7 @@ let createTaskParser = object({
   question: string({ trim: true, nonEmpty: true }),
 })
 
-app.post('/task', (req, res, next) => {
+app.post('/tasks', (req, res, next) => {
   let input = createTaskParser.parse(req.body, { name: 'req.body' })
   let id = randomUUID()
   let task: Task = { id, question: input.question }
@@ -43,7 +43,7 @@ app.post('/task', (req, res, next) => {
 })
 
 let getTaskResponses: Response[] = []
-app.get('/task', (req, res, next) => {
+app.get('/tasks/pending', (req, res, next) => {
   let task = taskQueue[0]
   if (task) {
     res.json({ task })
@@ -57,11 +57,14 @@ app.get('/task', (req, res, next) => {
   }, longPullingInterval)
 })
 
-app.get('/task/:id', (req, res, next) => {
+app.get('/tasks/:id', (req, res, next) => {
   let id = req.params.id
   let task = taskDict[id]
   if (!task) throw new HttpError(404, `task not found, id: ${id}`)
-  res.json({ task })
+  if (req.query.completed != 'true' || task.completed) {
+    res.json({ task })
+    return
+  }
 })
 
 let updateTaskParser = object({
@@ -69,7 +72,7 @@ let updateTaskParser = object({
   html: string(),
   completed: boolean(),
 })
-app.post('/task/:id/update', (req, res, next) => {
+app.patch('/tasks/:id', (req, res, next) => {
   let id = req.params.id
   let task = taskDict[id]
   if (!task) throw new HttpError(404, `task not found, id: ${id}`)
