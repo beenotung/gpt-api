@@ -1,9 +1,15 @@
 import { boolean, object, string } from 'cast.ts'
-import express, { ErrorRequestHandler, Request, Response } from 'express'
+import express, {
+  ErrorRequestHandler,
+  NextFunction,
+  Request,
+  Response,
+} from 'express'
 import { print } from 'listening-on'
 import { HttpError } from './http.error'
 import { randomUUID } from 'crypto'
 import cors from 'cors'
+import httpStatus from 'http-status'
 
 let longPullingInterval = 5000
 
@@ -25,10 +31,33 @@ type Task = {
 let taskDict: Record<string, Task> = {}
 let taskQueue: Task[] = []
 
+let getPendingTaskResponses: Response[] = []
+
+function deferLongPollingResponse(
+  responses: Response[],
+  res: Response,
+  timeout: number,
+) {
+  responses.push(res)
+  setTimeout(() => {
+    let index = responses.indexOf(res)
+    if (index == -1) return
+    responses.splice(index, 1)
+    res.redirect(httpStatus.TEMPORARY_REDIRECT, res.req.url)
+  }, timeout)
+}
+
+function resolveLongPollingResponses(
+  responses: Response[],
+  f: (res: Response) => void,
+) {
+  responses.forEach(res => f(res))
+  responses.length = 0
+}
+
 let createTaskParser = object({
   question: string({ trim: true, nonEmpty: true }),
 })
-
 app.post('/tasks', (req, res, next) => {
   let input = createTaskParser.parse(req.body, { name: 'req.body' })
   let id = randomUUID()
@@ -36,25 +65,18 @@ app.post('/tasks', (req, res, next) => {
   taskDict[id] = task
   taskQueue.push(task)
   res.json({ id })
-  getTaskResponses.forEach(res => {
-    res.json({ task: taskQueue[0] })
-  })
-  getTaskResponses.length = 0
+  resolveLongPollingResponses(getPendingTaskResponses, res =>
+    res.json({ task }),
+  )
 })
 
-let getTaskResponses: Response[] = []
 app.get('/tasks/pending', (req, res, next) => {
   let task = taskQueue[0]
   if (task) {
     res.json({ task })
     return
   }
-  getTaskResponses.push(res)
-  setTimeout(() => {
-    let index = getTaskResponses.indexOf(res)
-    getTaskResponses.splice(index, 1)
-    next(new HttpError(404, `no task on queue`))
-  }, longPullingInterval)
+  deferLongPollingResponse(getPendingTaskResponses, res, longPullingInterval)
 })
 
 app.get('/tasks/:id', (req, res, next) => {
