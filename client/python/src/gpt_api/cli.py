@@ -12,7 +12,7 @@ def clear_screen():
 last_text = None
 
 
-def show_process(task):
+def show_progress(task):
     global last_text, question
     if 'text' in task:
         text = task['text']
@@ -34,8 +34,8 @@ def main():
         question = input('Ask a question or type bye/exit/quit to exit: ')
         if question in ['bye', 'exit', 'quit']:
             break
-        task = ask(question=question, callback=show_process)
-        show_process(task)
+        task = ask(question=question, callback=show_progress)
+        show_progress(task)
 
 
 if __name__ == '__main__':
