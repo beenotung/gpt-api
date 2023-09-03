@@ -1,10 +1,5 @@
 import { boolean, object, string } from 'cast.ts'
-import express, {
-  ErrorRequestHandler,
-  NextFunction,
-  Request,
-  Response,
-} from 'express'
+import express, { ErrorRequestHandler, Response } from 'express'
 import { print } from 'listening-on'
 import { HttpError } from './http.error'
 import { randomUUID } from 'crypto'
@@ -32,6 +27,13 @@ let taskDict: Record<string, Task> = {}
 let taskQueue: Task[] = []
 
 let getPendingTaskResponses: Response[] = []
+
+let getCompletedTaskResponses = new Map<Task, Response[]>()
+
+function dequeueTask(task: Task) {
+  let index = taskQueue.indexOf(task)
+  if (index != -1) taskQueue.splice(index, 1)
+}
 
 function deferLongPollingResponse(
   responses: Response[],
@@ -103,10 +105,30 @@ app.patch('/tasks/:id', (req, res, next) => {
   task.html = input.html
   task.completed = input.completed
   if (task.completed) {
-    let index = taskQueue.indexOf(task)
-    taskQueue.splice(index, 1)
+    dequeueTask(task)
+    let responses = getCompletedTaskResponses.get(task)
+    if (responses) {
+      resolveLongPollingResponses(responses, res => res.json({ task }))
+      getCompletedTaskResponses.delete(task)
+    }
   }
-  res.json({ message: 'updated task' })
+  res.json({ message: 'task updated' })
+})
+
+app.delete('/tasks/:id', (req, res, next) => {
+  let id = req.params.id
+  let task = taskDict[id]
+  if (!task) throw new HttpError(404, `task not found, id: ${id}`)
+  delete taskDict[id]
+  dequeueTask(task)
+  let responses = getCompletedTaskResponses.get(task)
+  if (responses) {
+    resolveLongPollingResponses(responses, res =>
+      res.status(httpStatus.GONE).json({ error: 'task deleted' }),
+    )
+    getCompletedTaskResponses.delete(task)
+  }
+  res.json({ message: 'task deleted' })
 })
 
 app.use((req, res, next) =>
