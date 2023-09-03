@@ -97,11 +97,13 @@ app.use((req, res, next) =>
 )
 
 let errorHandler: ErrorRequestHandler = (err: HttpError, req, res, next) => {
+  if (!err.statusCode) console.error(err)
   res.status(err.statusCode || 500)
+  let error = String(err).replace(/^(\w*)Error: /, '')
   if (req.headers.accept?.includes('application/json')) {
-    res.json({ error: String(err).replace(/^(\w*)Error: /, '') })
+    res.json({ error })
   } else {
-    next(err)
+    res.end(error)
   }
 }
 app.use(errorHandler)
