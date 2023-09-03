@@ -1,5 +1,9 @@
 # node-gpt-api
 
+TODO: add desc
+
+[![npm Package Version](https://img.shields.io/npm/v/node-gpt-api)](https://www.npmjs.com/package/node-gpt-api)
+
 ## License
 
 This project is licensed with [BSD-2-Clause](./LICENSE)
