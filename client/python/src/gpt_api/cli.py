@@ -1,4 +1,4 @@
-from . import ask
+from .api import ask
 import os
 
 
