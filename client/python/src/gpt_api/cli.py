@@ -1,4 +1,4 @@
-from gpt_api import ask
+from . import ask
 import os
 
 
@@ -29,9 +29,14 @@ def show_process(task):
     last_text = text
 
 
-while True:
-    question = input('Ask a question or type bye/exit/quit to exit: ')
-    if question in ['bye', 'exit', 'quit']:
-        break
-    task = ask(question=question, callback=show_process)
-    show_process(task)
+def main():
+    while True:
+        question = input('Ask a question or type bye/exit/quit to exit: ')
+        if question in ['bye', 'exit', 'quit']:
+            break
+        task = ask(question=question, callback=show_process)
+        show_process(task)
+
+
+if __name__ == '__main__':
+    main()

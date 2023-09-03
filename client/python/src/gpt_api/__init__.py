@@ -1,5 +1,7 @@
 import requests
 
+__version__ = "0.0.1"
+
 api_origin = 'http://localhost:8041'
 
 
