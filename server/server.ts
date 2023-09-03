@@ -7,6 +7,7 @@ import cors from 'cors'
 import httpStatus from 'http-status'
 
 let longPullingInterval = 5000
+let taskTimeoutInterval = 3 * 60 * 1000
 
 let app = express()
 
@@ -29,6 +30,25 @@ let taskQueue: Task[] = []
 let getPendingTaskResponses: Response[] = []
 
 let getCompletedTaskResponses = new Map<Task, Response[]>()
+
+function getOrCreateGetCompletedTaskResponses(task: Task) {
+  let responses = getCompletedTaskResponses.get(task)
+  if (!responses) {
+    responses = []
+    getCompletedTaskResponses.set(task, responses)
+  }
+  return responses
+}
+
+function clearGetCompletedTaskResponses(
+  task: Task,
+  f: (res: Response) => void,
+) {
+  let responses = getCompletedTaskResponses.get(task)
+  if (!responses) return
+  responses.forEach(res => f(res))
+  getCompletedTaskResponses.delete(task)
+}
 
 function dequeueTask(task: Task) {
   let index = taskQueue.indexOf(task)
@@ -85,10 +105,12 @@ app.get('/tasks/:id', (req, res, next) => {
   let id = req.params.id
   let task = taskDict[id]
   if (!task) throw new HttpError(404, `task not found, id: ${id}`)
-  if (req.query.completed != 'true' || task.completed) {
-    res.json({ task })
+  if (req.query.completed == 'true' && !task.completed) {
+    let responses = getOrCreateGetCompletedTaskResponses(task)
+    deferLongPollingResponse(responses, res, taskTimeoutInterval)
     return
   }
+  res.json({ task })
 })
 
 let updateTaskParser = object({
@@ -106,11 +128,7 @@ app.patch('/tasks/:id', (req, res, next) => {
   task.completed = input.completed
   if (task.completed) {
     dequeueTask(task)
-    let responses = getCompletedTaskResponses.get(task)
-    if (responses) {
-      resolveLongPollingResponses(responses, res => res.json({ task }))
-      getCompletedTaskResponses.delete(task)
-    }
+    clearGetCompletedTaskResponses(task, res => res.json({ task }))
   }
   res.json({ message: 'task updated' })
 })
@@ -121,13 +139,9 @@ app.delete('/tasks/:id', (req, res, next) => {
   if (!task) throw new HttpError(404, `task not found, id: ${id}`)
   delete taskDict[id]
   dequeueTask(task)
-  let responses = getCompletedTaskResponses.get(task)
-  if (responses) {
-    resolveLongPollingResponses(responses, res =>
-      res.status(httpStatus.GONE).json({ error: 'task deleted' }),
-    )
-    getCompletedTaskResponses.delete(task)
-  }
+  clearGetCompletedTaskResponses(task, res =>
+    res.status(httpStatus.GONE).json({ error: 'task deleted' }),
+  )
   res.json({ message: 'task deleted' })
 })
 
