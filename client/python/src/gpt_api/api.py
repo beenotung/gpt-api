@@ -4,10 +4,7 @@ import requests
 api_origin = 'http://localhost:8041'
 
 
-def ask(question: str, wait=False, callback=None):
-    if wait is False and callback is None:
-        raise Exception(
-            'either wait should be True or callback should be provided')
+def ask(question: str, callback=None):
     id = create_task(question=question)
     if callback is not None:
         while True:
