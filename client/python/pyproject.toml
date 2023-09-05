@@ -16,7 +16,24 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
 ]
-keywords = ["feed", "reader", "tutorial"]
+keywords = [
+    "gpt",
+    "gpt-api",
+    "openai",
+    "language-model",
+    "nlp",
+    "ai",
+    "chatbot",
+    "text-generation",
+    "text-summarization",
+    "translation",
+    "question-answering",
+    "sentiment-analysis",
+    "content-moderation",
+    "conversational-ai",
+    "poe",
+    "sdk"
+]
 dependencies = [
     "requests",
 ]

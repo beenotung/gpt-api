@@ -6,7 +6,24 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "gpt",
+    "gpt-api",
+    "openai",
+    "language-model",
+    "nlp",
+    "ai",
+    "chatbot",
+    "text-generation",
+    "text-summarization",
+    "translation",
+    "question-answering",
+    "sentiment-analysis",
+    "content-moderation",
+    "conversational-ai",
+    "poe",
+    "sdk"
+  ],
   "author": "",
   "license": "BSD-2-Clause"
 }
