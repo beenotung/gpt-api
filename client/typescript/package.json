@@ -1,10 +1,11 @@
 {
   "name": "node-gpt-api",
   "version": "0.0.0",
-  "description": "",
+  "description": "client sdk to access GPT API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc --noEmit",
+    "build": "tsc -p ."
   },
   "keywords": [
     "gpt",
@@ -24,6 +25,16 @@
     "poe",
     "sdk"
   ],
-  "author": "",
-  "license": "BSD-2-Clause"
+  "author": {
+    "name": "Beeno Tung",
+    "email": "aabbcc1241@yahoo.com.hk",
+    "url": "https://beeno-tung.surge.sh"
+  },
+  "license": "BSD-2-Clause",
+  "devDependencies": {
+    "@types/node": "^20.5.3",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.1.6"
+  }
 }
