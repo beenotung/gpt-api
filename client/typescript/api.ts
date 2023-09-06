@@ -23,17 +23,16 @@ export async function ask(
   callback?: (task: Task) => void | Promise<void>,
 ): Promise<CompletedTask> {
   let id = await createTask(question)
-  if (callback) {
-    for (;;) {
-      let task = await getTask(id)
-      await callback(task)
-      if (task.completed) {
-        return task
-      }
+  if (!callback) {
+    return waitAndGetTask(id)
+  }
+  for (;;) {
+    let task = await getTask(id)
+    await callback(task)
+    if (task.completed) {
+      return task as CompletedTask
     }
   }
-  let task = await waitAndGetTask(id)
-  return task
 }
 
 export async function createTask(question: string): Promise<UUID> {

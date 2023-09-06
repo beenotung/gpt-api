@@ -6,13 +6,13 @@ api_origin = 'http://localhost:8041'
 
 def ask(question: str, callback=None):
     id = create_task(question=question)
-    if callback is not None:
-        while True:
-            task = get_task(id=id, completed=False)
-            callback(task)
-            if 'completed' in task and task['completed'] is True:
-                return task
-    return get_task(id=id, completed=True)
+    if callback is None:
+        return get_task(id=id, completed=True)
+    while True:
+        task = get_task(id=id, completed=False)
+        callback(task)
+        if 'completed' in task and task['completed'] is True:
+            return task
 
 
 def create_task(question: str):
