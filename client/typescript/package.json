@@ -1,6 +1,6 @@
 {
   "name": "node-gpt-api",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "client sdk to access GPT API",
   "keywords": [
     "gpt",
