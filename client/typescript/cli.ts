@@ -1,5 +1,5 @@
 import * as readline from 'readline'
-import { askAndWait, Task } from './api'
+import { ask, Task } from './api'
 
 export function main() {
   let rl = readline.createInterface({
@@ -27,7 +27,7 @@ export function main() {
           rl.close()
           return
       }
-      askAndWait(question, task => showProgress(task))
+      ask(question, task => showProgress(task))
         .then(task => {
           console.log('='.repeat(32))
           console.log('text:', task.text.length, 'html:', task.html.length)

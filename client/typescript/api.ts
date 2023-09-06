@@ -10,10 +10,18 @@ export type Task = {
   completed?: boolean
 }
 
-export async function askAndWait(
+export type CompletedTask = {
+  id: string
+  question: string
+  text: string
+  html: string
+  completed: true
+}
+
+export async function ask(
   question: string,
   callback?: (task: Task) => void | Promise<void>,
-): Promise<Task> {
+): Promise<CompletedTask> {
   let id = await createTask(question)
   if (callback) {
     for (;;) {
@@ -51,7 +59,7 @@ export async function getTask(id: UUID): Promise<Task> {
   return json.task
 }
 
-export async function waitAndGetTask(id: UUID): Promise<Task> {
+export async function waitAndGetTask(id: UUID): Promise<CompletedTask> {
   let res = await fetch(`${api_origin}/tasks/${id}?completed=true`, {
     headers: { Accept: 'application/json' },
   })
