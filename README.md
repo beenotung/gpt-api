@@ -67,6 +67,32 @@ print(f"text: {len(task['text'])}, html: {len(task['html'])}")
 
 Detail example can refer to the demo [cli.py](./client/python/src/gpt_api/cli.py)
 
+### Calling GPT-API from Typescript
+
+```typescript
+import { ask } from 'node-gpt-api'
+import { writeFileSync } from 'fs'
+
+async function main() {
+  // ask GPT a question and wait for complete response
+  let task = await ask('Can I call GPT API from Typescript?')
+  console.log(task.text)
+  writeFileSync(`task-${task.id}.html`, task.html)
+
+  // ask GPT a question and process the partial response in realtime
+  task = await ask('What can I do with GPT?', task => {
+    console.clear()
+    console.log(task.question)
+    console.log('='.repeat(32))
+    console.log(task.text)
+  })
+  console.log('text:', task.text.length, 'html:', task.html.length)
+}
+main()
+```
+
+Detail example can refer to the demo [cli.ts](./client/typescript/cli.ts)
+
 ## API Endpoints
 
 The API endpoint can be used directly if the SDK for your programming language is not available.
