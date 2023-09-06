@@ -46,10 +46,11 @@ from gpt_api import ask
 from gpt_api.cli import clear_screen
 
 # ask GPT a question and wait for complete response
-task = ask(question='Can I use POE over API?', wait=True)
+task = ask(question='Can I call GPT API from python?')
 file_path = f"task-{task['id']}.html"
 with open(file_path, 'w') as file:
 	file.write(task['html'])
+print(task['text'])
 
 
 # ask GPT a question and process the partial response in realtime
@@ -60,8 +61,8 @@ def show_progress(task):
 	print(task['text'])
 
 # Use the chat method
-task = gpt.chat(prompt='Hello, World!', callback=show_progress)
-show_progress(task)
+task = gpt.chat(prompt='What can I do with GPT?', callback=show_progress)
+print(f"text: {len(task['text'])}, html: {len(task['html'])}")
 ```
 
 Detail example can refer to the demo [cli.py](./client/python/src/gpt_api/cli.py)
