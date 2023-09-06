@@ -2,11 +2,6 @@
   "name": "node-gpt-api",
   "version": "0.0.0",
   "description": "client sdk to access GPT API",
-  "main": "index.js",
-  "scripts": {
-    "test": "tsc --noEmit",
-    "build": "tsc -p ."
-  },
   "keywords": [
     "gpt",
     "gpt-api",
@@ -31,6 +26,20 @@
     "url": "https://beeno-tung.surge.sh"
   },
   "license": "BSD-2-Clause",
+  "main": "dist/api.js",
+  "types": "dist/api.d.ts",
+  "bin": {
+    "gpt-api": "dist/cli.js"
+  },
+  "files": [
+    "dist/api.js",
+    "dist/api.d.ts",
+    "dist/cli.js"
+  ],
+  "scripts": {
+    "test": "tsc --noEmit",
+    "build": "tsc -p ."
+  },
   "devDependencies": {
     "@types/node": "^20.5.3",
     "ts-node": "^10.9.1",
