@@ -13,11 +13,9 @@ export function main() {
       return
     }
     console.clear()
-    console.log('='.repeat(32))
     console.log(task.question)
     console.log('='.repeat(32))
     console.log(text)
-    console.log('='.repeat(32))
     last_text = text
   }
   function loop() {
@@ -31,13 +29,11 @@ export function main() {
       }
       askAndWait(question, task => showProgress(task))
         .then(task => {
-          showProgress(task)
-          loop()
+          console.log('='.repeat(32))
+          console.log('text:', task.text.length, 'html:', task.html.length)
         })
-        .catch(err => {
-          console.error(err)
-          loop()
-        })
+        .catch(err => console.error(err))
+        .finally(() => loop())
     })
   }
   loop()

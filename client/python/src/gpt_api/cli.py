@@ -21,11 +21,9 @@ def show_progress(task):
     if text == last_text:
         return
     clear_screen()
-    print('=' * 32)
     print(question)
     print('=' * 32)
     print(text)
-    print('=' * 32)
     last_text = text
 
 
@@ -35,7 +33,8 @@ def main():
         if question in ['bye', 'exit', 'quit']:
             break
         task = ask(question=question, callback=show_progress)
-        show_progress(task)
+        print('=' * 32)
+        print(f"text: {len(task['text'])}, html: {len(task['html'])}")
 
 
 if __name__ == '__main__':
