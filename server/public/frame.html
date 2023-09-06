@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GPT-API</title>
+  </head>
+  <body>
+    <h1>GPT-API Proxy Frame</h1>
+    <p>Status: <span id="statusNode"></span></p>
+    <p>API: <span id="apiNode"></span> (<span id="fetchStatusNode"></span>)</p>
+    <div>
+      Question:
+      <p id="questionNode"></p>
+    </div>
+    <div>
+      Response:
+      <div id="responseNode"></div>
+    </div>
+    <script>
+      window.addEventListener('message', event => {
+        let { type, id, url, init } = event.data
+        if (type == 'fetch' && id && url) {
+          statusNode.textContent = 'connected'
+          apiNode.textContent = `${init?.method || 'GET'} ${url}`
+          fetchStatusNode.textContent = 'waiting'
+          fetch(url, init)
+            .then(res => res.json())
+            .catch(err => ({ error: String(err) }))
+            .then(json => {
+              send({ type: 'fetch-result', id, json })
+              if (json.task?.question) {
+                questionNode.textContent = json.task.question
+              }
+              if (
+                init.method == 'PATCH' &&
+                init.headers['Content-Type'] == 'application/json'
+              ) {
+                responseNode.innerHTML =
+                  JSON.parse(init.body).html || 'waiting response ...'
+              }
+            })
+            .finally(() => {
+              fetchStatusNode.textContent = 'done'
+            })
+          return
+        }
+        console.log('event.data:', event.data)
+      })
+      function send(data) {
+        self.opener.postMessage(data, '*')
+      }
+      send({ type: 'frame-ready' })
+    </script>
+  </body>
+</html>

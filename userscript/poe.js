@@ -20,6 +20,14 @@
   iteration++
   window.iteration = iteration
 
+  let onmessage
+
+  function stopIteration(context) {
+    console.log('detected next iteration, stop ' + context)
+    proxyWindowP.then(proxyWindow => proxyWindow.close())
+    window.removeEventListener('message', onmessage)
+  }
+
   function querySelector(selector) {
     let es = document.querySelectorAll(selector)
     if (es.length != 1) {
@@ -36,7 +44,7 @@
   function waitFor(f, cb) {
     function loop() {
       if (window.iteration != iteration) {
-        console.log('detected next iteration, stop waitFor()')
+        stopIteration('waitFor()')
         return
       }
       if (f()) {
@@ -128,14 +136,60 @@
   window.ask = ask
 
   let apiOrigin = 'http://localhost:8041'
+  // let apiOrigin = 'http://127.0.0.1:8041'
 
-  async function fetchJSON(url, init) {
-    let res = await fetch(apiOrigin + url, init)
-    let json = await res.json()
-    if (json.error) {
-      throw json.error
+  let messageListeners = new Set()
+
+  let proxyWindowP = new Promise((resolve, reject) => {
+    let proxyWindow = window.open(apiOrigin + '/frame.html')
+    onmessage = event => {
+      if (window.iteration != iteration) {
+        stopIteration('onmessage()')
+        return
+      }
+      if (event.origin != apiOrigin) return
+      console.log('message.data:', event.data)
+      if (event.data.type == 'frame-ready') {
+        resolve(proxyWindow)
+        return
+      }
+      messageListeners.forEach(listener => listener(event))
     }
-    return json
+    window.addEventListener('message', onmessage)
+  })
+
+  let messageCount = 0
+
+  function fetchJSON(url, init) {
+    console.log('fetch', { url, init })
+    return proxyWindowP.then(
+      proxyWindow =>
+        new Promise((resolve, reject) => {
+          messageCount++
+          let id = messageCount
+          let listener = event => {
+            let { json, type } = event.data
+            if (event.data.id != id || type != 'fetch-result') {
+              return
+            }
+            messageListeners.delete(listener)
+            if (json.error) {
+              reject(json.error)
+            } else {
+              resolve(json)
+            }
+          }
+          messageListeners.add(listener)
+          proxyWindow.postMessage({ type: 'fetch', id, url, init }, apiOrigin)
+        }),
+    )
+
+    // let res = await fetch(apiOrigin + url, init)
+    // let json = await res.json()
+    // if (json.error) {
+    //   throw json.error
+    // }
+    // return json
   }
 
   function getPendingTask() {
@@ -159,7 +213,7 @@
 
   function loop() {
     if (window.iteration != iteration) {
-      console.log('detected next iteration, stop loop()')
+      stopIteration('loop()')
       return
     }
     getPendingTask()
