@@ -3,7 +3,7 @@
 [![npm Package Version](https://img.shields.io/npm/v/node-gpt-api)](https://www.npmjs.com/package/node-gpt-api)
 [![PyPi Package Version](https://img.shields.io/pypi/v/gpt-api-python)](https://pypi.org/project/gpt-api-python)
 
-An API-focused library that allows you to seamlessly integrate GPT-powered conversational functionalities into applications developed in any programming language.
+GPT-API - a library providing an API for developers to integrate GPT's AI-powered conversational features into applications developed in any programming language (without OpenAI API key nor VPN).
 
 <figure style="text-align:center">
 <img alt="A developer working with a laptop and a mini robot assistant standing on the table" src="https://image2.cdn.seaart.ai/2023-07-25/48738386387013/7d7e69e04161e8da19cd1b1f4c08e077af90cb1a.png" style="max-width: 50ch">

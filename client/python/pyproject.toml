@@ -6,8 +6,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gpt-api-python"
-version = "1.0.0"
-description = "client sdk to access GPT API"
+version = "1.0.1"
+description = "Python client sdk to access GPT's AI-powered conversational functionality (without OpenAI API key nor VPN)"
 readme = "README.md"
 authors = [{ name = "Beeno Tung", email = "aabbcc1241@yahoo.com.hk" }]
 license = { file = "LICENSE" }
