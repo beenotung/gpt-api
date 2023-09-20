@@ -10,6 +10,7 @@ def clear_screen():
 
 
 last_text = None
+question = None
 
 
 def show_progress(task):
@@ -28,6 +29,7 @@ def show_progress(task):
 
 
 def main():
+    global question
     while True:
         question = input('Ask a question or type bye/exit/quit to exit: ')
         if question in ['bye', 'exit', 'quit']:
