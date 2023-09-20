@@ -1,7 +1,7 @@
 {
   "name": "node-gpt-api",
-  "version": "1.0.0",
-  "description": "client sdk to access GPT API",
+  "version": "1.0.2",
+  "description": "Typescript / Javascript client sdk to access GPT's AI-powered conversational functionality (without OpenAI API key nor VPN)",
   "keywords": [
     "gpt",
     "gpt-api",

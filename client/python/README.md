@@ -1,10 +1,8 @@
 # gpt-api-python
 
-Python client sdk to access GPT API
+Python client sdk to access GPT's AI-powered conversational functionality (without OpenAI API key nor VPN).
 
 [![PyPi Package Version](https://img.shields.io/pypi/v/gpt-api-python)](https://pypi.org/project/gpt-api-python)
-
-An API-focused library that allows you to seamlessly integrate GPT-powered conversational functionalities into applications developed in any programming language.
 
 Details refer to https://github.com/beenotung/gpt-api
 

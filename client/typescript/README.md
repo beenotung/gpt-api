@@ -1,10 +1,8 @@
 # node-gpt-api
 
-Typescript client sdk to access GPT API
+Typescript / Javascript client sdk to access GPT's AI-powered conversational functionality (without OpenAI API key nor VPN).
 
 [![npm Package Version](https://img.shields.io/npm/v/node-gpt-api)](https://www.npmjs.com/package/node-gpt-api)
-
-An API-focused library that allows you to seamlessly integrate GPT-powered conversational functionalities into applications developed in any programming language.
 
 Details refer to https://github.com/beenotung/gpt-api
 
