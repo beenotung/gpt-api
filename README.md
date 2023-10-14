@@ -6,7 +6,7 @@
 GPT-API - a library providing an API for developers to integrate GPT's AI-powered conversational features into applications developed in any programming language (without OpenAI API key nor VPN).
 
 <figure style="text-align:center">
-<img alt="A developer working with a laptop and a mini robot assistant standing on the table" src="https://image2.cdn.seaart.ai/2023-07-25/48738386387013/7d7e69e04161e8da19cd1b1f4c08e077af90cb1a.png" style="max-width: 50ch">
+<img alt="A developer working with a laptop and a mini robot assistant standing on the table" src="https://image2.cdn2.seaart.ai/2023-07-25/48738386387013/7d7e69e04161e8da19cd1b1f4c08e077af90cb1a.png" style="max-width: 50ch">
 <figcaption>
 Illustration Source: https://www.seaart.ai/explore/detail/civigtp4msb4urco4c5g
 </figcaption>
