@@ -51,7 +51,7 @@ task = gpt.chat(prompt='What can I do with GPT?', callback=show_progress)
 print(f"text: {len(task['text'])}, html: {len(task['html'])}")
 ```
 
-Detail example can refer to the demo [cli.py](./client/python/src/gpt_api/cli.py)
+Detail example can refer to the demo [cli.py](./src/gpt_api/cli.py)
 
 ## Proper Use
 
