@@ -110,7 +110,7 @@ API origin: http://localhost:8041
 Details can see the APIs with Insomnia. ([config file: api/Insomnia.json](./api/Insomnia.json))
 
 Side Note:
-The port number was suggested by GPT: 80 stands for Bot (t was omitted); 41 stands for A1. The digit characters look similar the english character
+The port number was suggested by GPT: 80 stands for Bot (t was omitted); 41 stands for A1. The digit characters look similar to the english characters.
 
 ## Proper Use
 
