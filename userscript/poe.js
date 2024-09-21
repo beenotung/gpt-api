@@ -41,7 +41,7 @@
     'button[class*=ChatMessageInputContainer_sendButton]',
   )
 
-  function waitFor(f, cb) {
+  function waitFor(f, cb, intervals) {
     function loop() {
       if (window.iteration != iteration) {
         stopIteration('waitFor()')
@@ -50,10 +50,14 @@
       if (f()) {
         cb()
       } else {
-        setTimeout(loop)
+        setTimeout(loop, intervals?.loop)
       }
     }
-    loop()
+    if (intervals?.initial) {
+      setTimeout(loop, intervals.initial)
+    } else {
+      loop()
+    }
   }
 
   function sendMessage(options) {
@@ -105,7 +109,24 @@
             let row = e.querySelector('[class*=ChatMessage_messageRow]')
             let html = row.outerHTML
             let text = row.innerText
-            options.onComplete({ html, text })
+            waitFor(
+              () => {
+                let new_html = row.outerHTML
+                let new_text = row.innerText
+                if (new_html == html && new_text == text) {
+                  return true
+                }
+                html = new_html
+                text = new_text
+              },
+              () => {
+                options.onComplete({ html, text })
+              },
+              {
+                initial: 500,
+                loop: 500,
+              },
+            )
           },
         )
       },
