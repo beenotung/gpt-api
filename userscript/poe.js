@@ -57,8 +57,17 @@
   }
 
   function sendMessage(options) {
-    textarea.value = options.question
     textarea.focus()
+    textarea.value += options.question
+
+    let event = new Event('input', {
+      bubbles: true,
+      cancelable: false,
+      composed: true,
+    })
+    event.data = textarea.value
+    textarea.dispatchEvent(event)
+
     waitFor(
       () => !sendButton.disabled,
       () => {
